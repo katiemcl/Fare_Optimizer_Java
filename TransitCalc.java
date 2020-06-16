@@ -1,6 +1,7 @@
 /**
  * Description: Fare calculator for New York Transit. Optimizes fares based 
- * on the rider's number of days using transit and number of rides within this time frame.
+ * on the integer inputs through command-line: number of days using transit,
+ * number of rides, and if eligible for discount (1 = yes)
  * Test project for Visual Studio Code and GitHub 
  * 
  * Date: 6/15/2020
@@ -38,7 +39,9 @@ public class TransitCalc {
     public double unlimited7Price(){
         double numWks = Math.ceil(days / DAYS[1]); // round up to full 7 day
         double totalPrice = numWks * PRICES[1];
-        double pricePer = totalPrice / (double) rides;
+
+        // round to nearest cent
+        double pricePer = Math.round((totalPrice / (double) rides) * 100) / 100.0;
         return pricePer;
     }
 
@@ -51,35 +54,55 @@ public class TransitCalc {
         pricePer[0] = PRICES[0]; // single pay per ride
         pricePer[1] = unlimited7Price(); // per ride w/ 7 day pass
         
-        double numTix = Math.ceil(days / DAYS[2]); // how many 30 day tix
+        double numTix = Math.ceil(days / DAYS[2]); // hround up to full 30 day 
         double totalPrice = numTix * PRICES[2]; // total price of all tix
 
         // round to nearest cent
         double priceEach = Math.round((totalPrice / (double) rides) * 100) / 100.0; 
         pricePer[2] = priceEach;
+
+        printPricePer(pricePer);
         
         return pricePer;
     }
 
     /**
-     * @return conclusion on most price efficient ticekt option
+     * @return elements in array
+     */
+    private void printPricePer(double[] array) {
+        for(int c = 0; c < array.length; c++) {
+            System.out.print(array[c] + " ");
+        }
+        System.out.println();
+    }
+
+    /**
+     * prints recommendation for ticket type and price
+     * @return conclusion on most price efficient ticket option
      */
     public String getBestFare() {
-        double[] prices = getRidePrices();
-        double min = Math.min((Math.min(prices[0], prices[1])), prices[2]);
+        double[] costs = getRidePrices();
+        double min = Math.min((Math.min(costs[0], costs[1])), costs[2]);
         String[] type = {"Pay-per-ride ", "7-day Unlimited ", "30-day Unlimited "};
         int ind = 2;
-        if(min == prices[1]) {
+        if(min == costs[1]) {
             ind = 1;
-        } if(min == prices[0]) {
+        } if(min == costs[0]) {
             ind = 0;
         }
-        return ("You should get the " + type[ind] + "option at $" + prices[ind] + " per ride.");
+        return ("You should get the " + type[ind] + "option at $" + costs[ind] + " per ride.");
     }
 
     // test unit
     public static void main(String[] args){
-        TransitCalc yoot = new TransitCalc(5, 12, true);
+        int days = Integer.parseInt(args[0]);
+        int rides = Integer.parseInt(args[1]);
+        int discount = Integer.parseInt(args[2]);
+        
+        boolean disc = (discount == 1);
+
+        TransitCalc yoot = new TransitCalc(days, rides, disc);
+        System.out.printf("Pricer per ride with 7-day Unlimited: $%.2f\n", yoot.unlimited7Price());
         System.out.println(yoot.getBestFare()); 
     }
     
