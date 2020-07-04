@@ -102,7 +102,7 @@ public class TransitCalc {
         boolean disc = (discount == 1);
 
         TransitCalc yoot = new TransitCalc(days, rides, disc);
-        System.out.printf("Pricer per ride with 7-day Unlimited: $%.2f\n", yoot.unlimited7Price());
+        System.out.printf("Price per ride with 7-day Unlimited: $%.2f\n", yoot.unlimited7Price());
         System.out.println(yoot.getBestFare()); 
     }
     
